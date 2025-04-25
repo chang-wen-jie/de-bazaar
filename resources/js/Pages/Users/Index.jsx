@@ -25,6 +25,12 @@ export default function UsersIndex({ users }) {
                                         <th className="border border-gray-300 px-4 py-2 text-left">
                                             Email
                                         </th>
+                                        <th className="border border-gray-300 px-4 py-2 text-left">
+                                            Role
+                                        </th>
+                                        <th className="border border-gray-300 px-4 py-2 text-left">
+                                            Administrator
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -34,11 +40,16 @@ export default function UsersIndex({ users }) {
                                             className="hover:bg-gray-50"
                                         >
                                             <td className="border border-gray-300 px-4 py-2">
-                                                {user.first_name} {user.infix}{' '}
-                                                {user.last_name}
+                                                {user.full_name}
                                             </td>
                                             <td className="border border-gray-300 px-4 py-2">
                                                 {user.email}
+                                            </td>
+                                            <td className="border border-gray-300 px-4 py-2">
+                                                {user.role?.name}
+                                            </td>
+                                            <td className="border border-gray-300 px-4 py-2">
+                                                {user.is_admin}
                                             </td>
                                         </tr>
                                     ))}

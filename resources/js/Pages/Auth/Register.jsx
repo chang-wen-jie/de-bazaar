@@ -7,11 +7,19 @@ import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
+        role_id: 1,
+        first_name: '',
+        infix: '',
         email: '',
         password: '',
         password_confirmation: '',
     });
+
+    const roleOptions = [
+        { value: 1, label: 'Guest' },
+        { value: 2, label: 'Private Advertiser' },
+        { value: 3, label: 'Business Advertiser' },
+    ];
 
     const submit = (e) => {
         e.preventDefault();
@@ -27,24 +35,77 @@ export default function Register() {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="role_id" value="Role*" />
 
-                    <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
-                        className="mt-1 block w-full"
-                        autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
+                    <select
+                        id="role_id"
+                        name="role_id"
+                        value={data.role_id}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        onChange={(e) => setData('role_id', e.target.value)}
                         required
-                    />
+                    >
+                        {roleOptions.map((role) => (
+                            <option key={role.value} value={role.value}>
+                                {role.label}
+                            </option>
+                        ))}
+                    </select>
 
-                    <InputError message={errors.name} className="mt-2" />
+                    <InputError message={errors.role_id} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="first_name" value="First Name*" />
+
+                    <TextInput
+                        id="first_name"
+                        name="first_name"
+                        value={data.first_name}
+                        className="mt-1 block w-full"
+                        autoComplete="first_name"
+                        isFocused={true}
+                        onChange={(e) => setData('first_name', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.first_name} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="infix" value="Infix" />
+
+                    <TextInput
+                        id="infix"
+                        name="infix"
+                        value={data.infix}
+                        className="mt-1 block w-full"
+                        autoComplete="infix"
+                        isFocused={true}
+                        onChange={(e) => setData('infix', e.target.value)}
+                    />
+
+                    <InputError message={errors.infix} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="last_name" value="Last Name*" />
+
+                    <TextInput
+                        id="last_name"
+                        name="last_name"
+                        value={data.last_name}
+                        className="mt-1 block w-full"
+                        autoComplete="last_name"
+                        isFocused={true}
+                        onChange={(e) => setData('last_name', e.target.value)}
+                    />
+
+                    <InputError message={errors.last_name} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="email" value="Email*" />
 
                     <TextInput
                         id="email"
@@ -61,7 +122,7 @@ export default function Register() {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value="Password*" />
 
                     <TextInput
                         id="password"
@@ -80,7 +141,7 @@ export default function Register() {
                 <div className="mt-4">
                     <InputLabel
                         htmlFor="password_confirmation"
-                        value="Confirm Password"
+                        value="Confirm Password*"
                     />
 
                     <TextInput

@@ -7,6 +7,7 @@ use App\Enums\RoleEnum;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -41,6 +42,13 @@ class User extends Authenticatable
     ];
 
     /**
+     * The attributes that should be appended to model's array and JSON form.
+     *
+     * @var list<string>
+     */
+    protected $appends = ['full_name'];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -53,13 +61,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function fullName(): string
+    public function getFullNameAttribute(): string
     {
-        if ($this->infix) {
-            return $this->first_name . ' ' . $this->infix . ' ' . $this->last_name;
-        }
-
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->infix
+            ? "{$this->first_name} {$this->infix} {$this->last_name}"
+            : "{$this->first_name} {$this->last_name}";
     }
 
     public function role(): BelongsTo
@@ -70,5 +76,15 @@ class User extends Authenticatable
     public function hasRole(RoleEnum $role): bool
     {
         return $this->role->name === $role->value;
+    }
+
+    public function advertisements(): HasMany
+    {
+        return $this->hasMany(Advertisement::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 }

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('advertisements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('type_id')->constrained()->onDelete('cascade');
-            $table->foreignId('status_id')->constrained()->onDelete('cascade');
+            $table->foreignId('type_id')->constrained('advertisement_types')->onDelete('cascade');
+            $table->foreignId('status_id')->constrained('advertisement_statuses')->onDelete('cascade');
             $table->string('qr_code');
             $table->string('title');
             $table->text('description');

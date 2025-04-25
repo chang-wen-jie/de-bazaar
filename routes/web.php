@@ -2,18 +2,13 @@
 
 use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect()->route(Auth::check() ? 'dashboard' : 'login');
 });
 
 Route::get('/dashboard', function () {
@@ -21,7 +16,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/users', [UserController::class, 'index'])->middleware(['auth'])->name('users.index');
+Route::get('/users/{user}', [UserController::class, 'show'])->middleware(['auth'])->name('users.show');
+Route::post('/users/{user}/reviews', [ReviewController::class, 'store'])->middleware(['auth'])->name('users.reviews.store');
 Route::get('/advertisements', [AdvertisementController::class, 'index'])->middleware(['auth'])->name('advertisements.index');
+Route::get('/advertisements/{advertisement}', [AdvertisementController::class, 'show'])->middleware(['auth'])->name('advertisements.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

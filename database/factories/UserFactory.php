@@ -28,7 +28,9 @@ class UserFactory extends Factory
             'role_id' => Role::inRandomOrder()->first()->id,
             'is_admin' => fake()->boolean(10),
             'first_name' => fake()->firstName(),
-            'infix' => fake()->randomElement([null, 'van', 'de', 'der', 'den']),
+            'infix' => fake()->randomElement([
+                null, 'van', 'de', 'der', 'den', 'van der', 'van de', 'ter', 'ten', 'de la', 'del', 'la', 'le', 'de la', 'du', 'des'
+            ]),
             'last_name' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
