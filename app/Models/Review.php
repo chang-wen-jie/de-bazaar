@@ -4,28 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Review extends Model
 {
     protected $fillable = [
-        'user_id',
-        'advertisement_id',
+        'reviewer_id',
+        'reviewable_id',
+        'reviewable_type',
         'rating',
         'comment',
     ];
 
-    public function user(): BelongsTo
+    public function reviewable(): MorphTo
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo();
     }
 
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewer_id');
-    }
-
-    public function advertisement(): BelongsTo
-    {
-        return $this->belongsTo(Advertisement::class);
     }
 }

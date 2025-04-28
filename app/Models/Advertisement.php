@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Notifications\Notifiable;
 
 class Advertisement extends Model
@@ -18,13 +19,18 @@ class Advertisement extends Model
         'user_id',
         'type_id',
         'status_id',
-        'qr_code',
         'title',
         'description',
         'price',
         'start_date',
         'end_date',
     ];
+
+    public function getQrCodeImage()
+    {
+        $url = route('advertisements.show', $this->id);
+        return \QrCode::size(100)->generate($url);
+    }
 
     public function user(): BelongsTo
     {
@@ -51,8 +57,13 @@ class Advertisement extends Model
         return $this->hasMany(Rental::class);
     }
 
-    public function reviews(): HasMany
+    public function favorites(): HasMany
     {
-        return $this->hasMany(Review::class);
+        return $this->belongsToMany(User::class, 'advertisement_user_favorites', 'advertisement_id', 'user_id')->withTimestamps();
+    }
+
+    public function reviews(): MorphMany
+    {
+        return $this->morphMany(Review::class, 'reviewable');
     }
 }

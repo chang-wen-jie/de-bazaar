@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             RentalStatusesSeeder::class,
         ]);
 
-        User::factory(20)->create();
-        Advertisement::factory(20)->create();
+        User::factory(100)->create();
+        Advertisement::factory(100)->create();
     }
 }

@@ -12,13 +12,21 @@ export default function UserShow({
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        content: '',
         rating: 5,
+        comment: '',
+        reviewable_id: user.id,
+        reviewable_type: 'App\\Models\\User',
     });
 
     function handleSubmit(e) {
         e.preventDefault();
-        post(route('users.reviews.store', user.id), {
+        post(route('reviews.store', { type: 'user', id: user.id }), {
+            data: {
+                rating: data.rating,
+                comment: data.comment,
+                reviewable_id: user.id,
+                reviewable_type: 'App\\Models\\User',
+            },
             onSuccess: () => {
                 reset();
                 setIsFormOpen(false);
@@ -26,13 +34,11 @@ export default function UserShow({
         });
     }
 
-    // Function to render star rating
     const renderStars = (rating) => {
         const stars = [];
         const fullStars = Math.floor(rating);
         const hasHalfStar = rating % 1 >= 0.5;
 
-        // Full stars
         for (let i = 0; i < fullStars; i++) {
             stars.push(
                 <svg
@@ -46,7 +52,6 @@ export default function UserShow({
             );
         }
 
-        // Half star
         if (hasHalfStar) {
             stars.push(
                 <svg
@@ -69,7 +74,6 @@ export default function UserShow({
             );
         }
 
-        // Empty stars
         for (let i = Math.ceil(rating); i < 5; i++) {
             stars.push(
                 <svg
@@ -99,7 +103,6 @@ export default function UserShow({
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        {/* Back button */}
                         <div className="border-b border-gray-200 p-4">
                             <Link
                                 href={route('advertisements.index')}
@@ -123,9 +126,7 @@ export default function UserShow({
                             </Link>
                         </div>
 
-                        {/* User Profile */}
                         <div className="p-6">
-                            {/* User Header */}
                             <div className="flex flex-col items-center border-b border-gray-200 pb-6 sm:flex-row sm:items-start">
                                 <div className="flex h-24 w-24 items-center justify-center rounded-full bg-blue-100 text-center text-4xl font-bold text-blue-600">
                                     {user.first_name.charAt(0)}
@@ -162,7 +163,6 @@ export default function UserShow({
                                 </div>
                             </div>
 
-                            {/* User's Active Listings */}
                             <div className="mt-8">
                                 <h2 className="mb-4 text-xl font-semibold text-gray-800">
                                     Active Listings
@@ -196,7 +196,8 @@ export default function UserShow({
                                                             }
                                                         </p>
                                                         <div className="mt-2">
-                                                            <span className="rounded bg-gray-200 px-2 py-1 text-xs">
+                                                            <span className="bg-gray-200 px-2 py-1 text-xs">
+                                                                #
                                                                 {
                                                                     advertisement
                                                                         .type
@@ -219,7 +220,6 @@ export default function UserShow({
                                 )}
                             </div>
 
-                            {/* Reviews Section */}
                             <div className="mt-8">
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-xl font-semibold text-gray-800">
@@ -239,7 +239,6 @@ export default function UserShow({
                                         )}
                                 </div>
 
-                                {/* Review Form */}
                                 {isFormOpen && (
                                     <div className="mt-4 rounded-lg border bg-gray-50 p-4">
                                         <h3 className="mb-2 font-medium">
@@ -287,10 +286,10 @@ export default function UserShow({
                                                     Review
                                                 </label>
                                                 <textarea
-                                                    value={data.content}
+                                                    value={data.comment}
                                                     onChange={(e) =>
                                                         setData(
-                                                            'content',
+                                                            'comment',
                                                             e.target.value,
                                                         )
                                                     }
@@ -298,9 +297,9 @@ export default function UserShow({
                                                     rows={4}
                                                     placeholder="Write your review here..."
                                                 ></textarea>
-                                                {errors.content && (
+                                                {errors.comment && (
                                                     <div className="mt-1 text-sm text-red-500">
-                                                        {errors.content}
+                                                        {errors.comment}
                                                     </div>
                                                 )}
                                             </div>
@@ -327,7 +326,6 @@ export default function UserShow({
                                     </div>
                                 )}
 
-                                {/* Reviews List */}
                                 <div className="mt-4">
                                     {user.reviews && user.reviews.length > 0 ? (
                                         <div className="space-y-4">
@@ -368,7 +366,7 @@ export default function UserShow({
                                                         </div>
                                                     </div>
                                                     <p className="mt-2 text-gray-700">
-                                                        {review.content}
+                                                        {review.comment}
                                                     </p>
                                                     <p className="mt-2 text-xs text-gray-500">
                                                         {new Date(

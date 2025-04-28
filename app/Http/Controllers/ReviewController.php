@@ -2,39 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AdvertisementTypeEnum;
+use App\Models\Advertisement;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 
 class ReviewController extends Controller
 {
-    public function store(Request $request, User $user)
+    public function store(Request $request)
     {
-        // Validate the request
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|max:1000',
+            'comment' => 'nullable|string|max:1000',
+            'reviewable_id' => 'required|integer',
+            'reviewable_type' => 'required|string',
         ]);
 
-        if (Auth::id() === $user->id) {
+        $reviewableClass = $request->reviewable_type;
+        $reviewableId = $request->reviewable_id;
+
+        if (!in_array($reviewableClass, [User::class, Advertisement::class])) {
+            return back()->with('error', 'Invalid reviewable entity.');
+        }
+
+        $reviewable = $reviewableClass::findOrFail($reviewableId);
+
+        if ($reviewableClass === User::class && Auth::id() === $reviewable->id) {
             return back()->with('error', 'You cannot review yourself.');
         }
 
-        $existingReview = Review::where('user_id', $user->id)
+        if ($reviewableClass === Advertisement::class && $reviewable->type->name !== AdvertisementTypeEnum::RENTAL) {
+            return back()->with('error', 'You can only review rental advertisements.');
+        }
+
+        $existingReview = Review::where('reviewable_type', $reviewableClass)
+            ->where('reviewable_id', $reviewableId)
             ->where('reviewer_id', Auth::id())
             ->first();
 
         if ($existingReview) {
-            return back()->with('error', 'You have already reviewed this user.');
+            return back()->with('error', 'You have already reviewed this entity.');
         }
 
-        $user->reviews()->create([
-            'comment' => $validated['rating'],
-            'content' => $validated['content'],
+        $reviewable->reviews()->create([
+            'rating' => $validated['rating'],
+            'comment' => $validated['comment'] ?? null,
             'reviewer_id' => Auth::id(),
         ]);
 
-        return Redirect::route('users.show', $user->id)->with('success', 'Review posted successfully!');
+        return back()->with('success', 'Review posted successfully!');
     }
 }

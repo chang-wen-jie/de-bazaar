@@ -23,7 +23,6 @@ class AdvertisementFactory extends Factory
             'user_id' => User::inRandomOrder()->first()->id,
             'type_id' => AdvertisementType::inRandomOrder()->first()->id,
             'status_id' => AdvertisementStatus::inRandomOrder()->first()->id,
-            'qr_code' => fake()->uuid(),
             'title' => fake()->sentence(5),
             'description' => fake()->paragraph(3),
             'price' => fake()->randomFloat(2, 10, 1000),

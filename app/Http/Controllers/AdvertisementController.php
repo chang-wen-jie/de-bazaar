@@ -30,6 +30,14 @@ class AdvertisementController extends Controller
 
         $advertisements = $query->paginate(8)->appends($request->query());
 
+        if (Auth::check()) {
+            $favoriteIds = Auth::user()->favorites()->pluck('advertisement_id')->toArray();
+
+            foreach ($advertisements as $advertisement) {
+                $advertisement->isFavorited = in_array($advertisement->id, $favoriteIds);
+            }
+        }
+
         return Inertia::render('Advertisements/Index', [
            'advertisements' => $advertisements,
             'filters' => $request->only(['type', 'sortBy', 'sortOrder']),
@@ -38,14 +46,30 @@ class AdvertisementController extends Controller
 
     public function show(Advertisement $advertisement): Response
     {
-        $advertisement->load(['user', 'type', 'status']);
+        $advertisement->load(['user', 'type', 'reviews.reviewer']);
 
-//        if ($advertisement->status->name !== 'active' && $advertisement->user_id !== Auth::id()) {
-//            abort(404);
-//        }
+        $averageRating = $advertisement->reviews->avg('rating') ?: 0;
+
+        $isFavorited = false;
+        $hasReviewed = false;
+
+        if (Auth::check()) {
+            $isFavorited = Auth::user()->favorites()
+                ->where('advertisement_id', $advertisement->id)
+                ->exists();
+
+            $hasReviewed = $advertisement->reviews()
+                ->where('reviewer_id', Auth::id())
+                ->exists();
+        }
 
         return Inertia::render('Advertisements/Show', [
-            'advertisement' => $advertisement
+            'advertisement' => $advertisement,
+            'averageRating' => $averageRating,
+            'reviewCount' => $advertisement->reviews->count(),
+            'isFavorited' => $isFavorited,
+            'hasReviewed' => $hasReviewed,
+            'currentUserId' => Auth::id(),
         ]);
     }
 }

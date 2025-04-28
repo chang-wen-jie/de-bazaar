@@ -21,13 +21,12 @@ class UserController extends Controller
 
     public function show(User $user): Response
     {
-        // Load the user with their reviews
         $user->load([
             'reviews.reviewer',
             'advertisements' => function($query) {
                 $query->whereHas('status', function($q) {
                     $q->where('name', 'active');
-                });
+                })->with('type');
             }
         ]);
 

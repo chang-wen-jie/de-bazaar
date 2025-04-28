@@ -46,6 +46,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Advertisements
                                 </NavLink>
+
+                                <NavLink
+                                    href={route('favorites.index')}
+                                    active={route().current('favorites.index')}
+                                >
+                                    Favorites
+                                </NavLink>
                             </div>
                         </div>
 
@@ -78,7 +85,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
                                     <Dropdown.Content>
                                         <Dropdown.Link
-                                            href={route('profile.edit')}
+                                            href={route('users.show', user.id)}
                                         >
                                             Profile
                                         </Dropdown.Link>
@@ -163,7 +170,9 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
+                            <ResponsiveNavLink
+                                href={route('users.show', user.id)}
+                            >
                                 Profile
                             </ResponsiveNavLink>
                             <ResponsiveNavLink

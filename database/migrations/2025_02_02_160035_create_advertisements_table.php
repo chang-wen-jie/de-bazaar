@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('type_id')->constrained('advertisement_types')->onDelete('cascade');
             $table->foreignId('status_id')->constrained('advertisement_statuses')->onDelete('cascade');
-            $table->string('qr_code');
             $table->string('title');
             $table->text('description');
             $table->decimal('price', 10);
