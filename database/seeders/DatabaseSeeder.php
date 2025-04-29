@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Advertisement;
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,9 +17,9 @@ class DatabaseSeeder extends Seeder
             AdvertisementTypesSeeder::class,
             AdvertisementStatusesSeeder::class,
             RentalStatusesSeeder::class,
+            UserSeeder::class,
+            AdvertisementSeeder::class,
+            ReviewSeeder::class,
         ]);
-
-        User::factory(100)->create();
-        Advertisement::factory(100)->create();
     }
 }
