@@ -20,7 +20,7 @@ class AdvertisementFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::inRandomOrder()->first()->id,
+            'user_id' => User::whereIn('role_id', [2, 3])->inRandomOrder()->first()->id,
             'type_id' => AdvertisementType::inRandomOrder()->first()->id,
             'status_id' => AdvertisementStatus::inRandomOrder()->first()->id,
             'title' => fake()->sentence(5),

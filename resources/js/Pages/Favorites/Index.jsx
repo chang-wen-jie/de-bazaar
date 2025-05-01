@@ -16,7 +16,6 @@ export default function FavoritesIndex({ favorites }) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6">
-
                             {favorites.length > 0 ? (
                                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                                     {favorites.map((advertisement) => (

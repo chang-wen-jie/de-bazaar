@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AdvertisementTypeEnum;
+use App\Enums\RoleEnum;
 use App\Models\Advertisement;
 use App\Models\Review;
 use App\Models\User;
@@ -31,6 +32,10 @@ class ReviewController extends Controller
 
         if ($reviewableClass === User::class && Auth::id() === $reviewable->id) {
             return back()->with('error', 'You cannot review yourself.');
+        }
+
+        if ($reviewableClass === User::class && $reviewable->role->name === RoleEnum::GUEST) {
+            return back()->with('error', 'You can only review advertisers.');
         }
 
         if ($reviewableClass === Advertisement::class && $reviewable->type->name !== AdvertisementTypeEnum::RENTAL) {

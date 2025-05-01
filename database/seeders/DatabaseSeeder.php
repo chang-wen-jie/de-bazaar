@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
             RolesSeeder::class,
             AdvertisementTypesSeeder::class,
             AdvertisementStatusesSeeder::class,
-            RentalStatusesSeeder::class,
             UserSeeder::class,
             AdvertisementSeeder::class,
             ReviewSeeder::class,

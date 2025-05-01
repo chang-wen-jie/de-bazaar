@@ -19,12 +19,11 @@ class ReviewFactory extends Factory
      */
     public function definition(): array
     {
-        // Randomly choose if it's a user review or an advertisement review
         if ($this->faker->boolean(50)) {
-            $reviewable = User::inRandomOrder()->first();
+            $reviewable = User::whereIn('role_id', [2, 3])->inRandomOrder()->first();
             $reviewableType = User::class;
         } else {
-            $reviewable = Advertisement::inRandomOrder()->first();
+            $reviewable = Advertisement::where('type_id', 3)->inRandomOrder()->first();
             $reviewableType = Advertisement::class;
         }
 

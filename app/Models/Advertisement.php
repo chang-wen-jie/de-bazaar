@@ -52,6 +52,11 @@ class Advertisement extends Model
         return $this->hasMany(Bid::class);
     }
 
+    public function purchases(): HasMany
+    {
+        return $this->hasMany(Purchase::class);
+    }
+
     public function rentals(): HasMany
     {
         return $this->hasMany(Rental::class);

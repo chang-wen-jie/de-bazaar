@@ -1,5 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.jsx';
 import { Head, Link, useForm } from '@inertiajs/react';
+import axios from 'axios';
 import { useState } from 'react';
 
 export default function AdvertisementShow({
@@ -13,6 +14,8 @@ export default function AdvertisementShow({
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [favorited, setFavorited] = useState(isFavorited);
     const isRental = advertisement.type.name === 'rental';
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [purchaseMessage, setPurchaseMessage] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         rating: 5,
@@ -49,6 +52,34 @@ export default function AdvertisementShow({
             })
             .catch((error) => {
                 console.error('Error toggling favorite:', error);
+            });
+    }
+
+    function handlePurchase() {
+        setIsProcessing(true);
+        setPurchaseMessage(null);
+
+        axios
+            .post(
+                route('advertisements.purchase', {
+                    advertisement: advertisement.id,
+                }),
+            )
+            .then((response) => {
+                setPurchaseMessage({
+                    type: 'success',
+                    text: response.data.message,
+                });
+            })
+            .catch((error) => {
+                setPurchaseMessage({
+                    type: 'error',
+                    text: error.response?.data?.message || 'An error occurred',
+                });
+                console.error('Error purchasing advertisement:', error);
+            })
+            .finally(() => {
+                setIsProcessing(false);
             });
     }
 
@@ -406,26 +437,58 @@ export default function AdvertisementShow({
                             )}
 
                             <div className="mt-8">
-                                <button
-                                    type="button"
-                                    className="w-full rounded-md bg-blue-600 py-3 text-center font-medium text-white hover:bg-blue-700"
-                                >
-                                    {isRental ? 'Rent' : 'Buy'}
-                                </button>
+                                {purchaseMessage && (
+                                    <div
+                                        className={`mb-4 rounded-md p-4 ${
+                                            purchaseMessage.type === 'success'
+                                                ? 'border border-green-200 bg-green-50 text-green-700'
+                                                : 'border border-red-200 bg-red-50 text-red-700'
+                                        }`}
+                                    >
+                                        {purchaseMessage.text}
+                                    </div>
+                                )}
 
-                                <button
-                                    onClick={handleFavoriteToggle}
-                                    type="button"
-                                    className={`mt-3 w-full rounded-md py-3 text-center font-medium ${
-                                        favorited
-                                            ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
-                                >
-                                    {favorited
-                                        ? 'Remove from Favorites'
-                                        : 'Add to Favorites'}
-                                </button>
+                                {currentUserId !== advertisement.user.id && (
+                                    <button
+                                        type="button"
+                                        onClick={handlePurchase}
+                                        disabled={isProcessing}
+                                        className="w-full rounded-md bg-blue-600 py-3 text-center font-medium text-white hover:bg-blue-700 disabled:bg-blue-300"
+                                    >
+                                        {isProcessing ? (
+                                            <span>Processing...</span>
+                                        ) : (
+                                            <span>
+                                                {isRental
+                                                    ? 'Rent Now'
+                                                    : 'Buy Now'}
+                                            </span>
+                                        )}
+                                    </button>
+                                )}
+
+                                {currentUserId !== advertisement.user.id && (
+                                    <button
+                                        onClick={handleFavoriteToggle}
+                                        type="button"
+                                        className={`mt-3 w-full rounded-md py-3 text-center font-medium ${
+                                            favorited
+                                                ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                        }`}
+                                    >
+                                        {favorited
+                                            ? 'Remove from Favorites'
+                                            : 'Add to Favorites'}
+                                    </button>
+                                )}
+
+                                {currentUserId === advertisement.user.id && (
+                                    <div className="rounded-md bg-gray-100 p-4 text-center text-gray-700">
+                                        You own this advertisement
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
