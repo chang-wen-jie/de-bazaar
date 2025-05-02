@@ -2,8 +2,12 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.jsx';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function AdvertisementsIndex({ advertisements, filters }) {
-    const { url } = usePage();
+export default function AdvertisementsIndex({
+    advertisements,
+    filters,
+    userCanCreate,
+}) {
+    const { auth } = usePage().props;
 
     // State for filters
     const [type, setType] = useState(filters.type || '');
@@ -28,7 +32,8 @@ export default function AdvertisementsIndex({ advertisements, filters }) {
             setPreviousSortBy(sortBy);
         }
 
-        window.location.href = `${url.split('?')[0]}?${query.toString()}`;
+        const currentPath = window.location.pathname;
+        window.location.href = `${currentPath}?${query.toString()}`;
     };
 
     return (
@@ -44,34 +49,58 @@ export default function AdvertisementsIndex({ advertisements, filters }) {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg">
-                        <div className="mb-4 flex flex-wrap items-center gap-4">
-                            <select
-                                value={type}
-                                onChange={(e) => setType(e.target.value)}
-                                className="min-w-[150px] rounded border px-3 py-2"
-                            >
-                                <option value="">All Types</option>
-                                <option value="Sale">Sale</option>
-                                <option value="Auction">Auction</option>
-                                <option value="Rental">Rental</option>
-                            </select>
+                        <div className="mb-6 flex justify-between">
+                            <div className="flex flex-wrap items-center gap-4">
+                                <select
+                                    value={type}
+                                    onChange={(e) => setType(e.target.value)}
+                                    className="min-w-[150px] rounded border px-3 py-2"
+                                >
+                                    <option value="">All Types</option>
+                                    <option value="Sale">Sale</option>
+                                    <option value="Auction">Auction</option>
+                                    <option value="Rental">Rental</option>
+                                </select>
 
-                            <select
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value)}
-                                className="min-w-[150px] rounded border px-3 py-2"
-                            >
-                                <option value="">Sort By</option>
-                                <option value="title">Title</option>
-                                <option value="price">Price</option>
-                            </select>
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="min-w-[150px] rounded border px-3 py-2"
+                                >
+                                    <option value="">Sort By</option>
+                                    <option value="title">Title</option>
+                                    <option value="price">Price</option>
+                                </select>
 
-                            <button
-                                onClick={applyFilters}
-                                className="rounded bg-blue-500 px-4 py-2 text-white"
-                            >
-                                Apply
-                            </button>
+                                <button
+                                    onClick={applyFilters}
+                                    className="rounded bg-blue-500 px-4 py-2 text-white"
+                                >
+                                    Apply
+                                </button>
+                            </div>
+
+                            {auth.user && (
+                                <>
+                                    {userCanCreate ? (
+                                        <Link
+                                            href={route(
+                                                'advertisements.create',
+                                            )}
+                                            className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                                        >
+                                            Create New Advertisement
+                                        </Link>
+                                    ) : (
+                                        <div className="flex items-center">
+                                            <span className="mr-2 text-sm text-gray-600">
+                                                You've reached your limit for
+                                                active advertisements
+                                            </span>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

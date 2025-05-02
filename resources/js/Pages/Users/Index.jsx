@@ -29,7 +29,7 @@ export default function UsersIndex({ users }) {
                                             Role
                                         </th>
                                         <th className="border border-gray-300 px-4 py-2 text-left">
-                                            Administrator
+                                            Actions
                                         </th>
                                     </tr>
                                 </thead>
@@ -49,7 +49,16 @@ export default function UsersIndex({ users }) {
                                                 {user.role?.name}
                                             </td>
                                             <td className="border border-gray-300 px-4 py-2">
-                                                {user.is_admin}
+                                                <div className="flex space-x-2">
+                                                    <a
+                                                        href={`/users/${user.id}/contract`}
+                                                        className="rounded bg-blue-500 px-2 py-1 text-white hover:bg-blue-600"
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                    >
+                                                        Download Contract
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

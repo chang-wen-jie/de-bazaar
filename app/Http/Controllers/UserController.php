@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\ContractGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -10,6 +11,13 @@ use Inertia\Response;
 
 class UserController extends Controller
 {
+    protected $contractGenerator;
+
+    public function __construct(ContractGenerator $contractGenerator)
+    {
+        $this->contractGenerator = $contractGenerator;
+    }
+
     public function index(): Response
     {
         $users = User::with('role')->paginate(10);
@@ -75,5 +83,16 @@ class UserController extends Controller
             'currentUserId' => Auth::id(),
             'allListings' => $allListings,
         ]);
+    }
+
+    /**
+     * Download a PDF contract for the user
+     */
+    public function downloadContract(User $user)
+    {
+        $pdf = $this->contractGenerator->generateContract($user);
+        $filename = $this->contractGenerator->getFilename($user);
+
+        return $pdf->download($filename);
     }
 }

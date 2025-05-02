@@ -180,7 +180,7 @@ export default function UserShow({
                             {isGuest ? (
                                 <div className="mt-8">
                                     <h2 className="mb-4 text-xl font-semibold text-gray-800">
-                                        Rented/Purchased Listings
+                                        Transactions
                                     </h2>
 
                                     {allListings && allListings.length > 0 ? (

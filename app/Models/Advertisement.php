@@ -71,4 +71,35 @@ class Advertisement extends Model
     {
         return $this->morphMany(Review::class, 'reviewable');
     }
+
+    public static function hasReachedTypeLimit($userId, $typeId, $maxAllowed = 4): bool
+    {
+        $count = self::where('user_id', $userId)
+            ->where('type_id', $typeId)
+            ->whereHas('status', function($query) {
+                $query->where('name', 'active');
+            })
+            ->count();
+
+        return $count >= $maxAllowed;
+    }
+
+    public static function getCountsByTypeForUser($userId): array
+    {
+        $counts = [];
+
+        $results = self::where('user_id', $userId)
+            ->whereHas('status', function($query) {
+                $query->where('name', 'active');
+            })
+            ->select('type_id', \DB::raw('count(*) as count'))
+            ->groupBy('type_id')
+            ->get();
+
+        foreach ($results as $result) {
+            $counts[$result->type_id] = $result->count;
+        }
+
+        return $counts;
+    }
 }

@@ -76,7 +76,7 @@ class User extends Authenticatable
 
     public function hasRole(RoleEnum $role): bool
     {
-        return $this->role->name === $role->value;
+        return $this->role->name === $role;
     }
 
     public function advertisements(): HasMany
@@ -102,5 +102,10 @@ class User extends Authenticatable
     public function reviews(): MorphMany
     {
         return $this->morphMany(Review::class, 'reviewable');
+    }
+
+    public function contracts(): HasMany
+    {
+        return $this->hasMany(Contract::class);
     }
 }

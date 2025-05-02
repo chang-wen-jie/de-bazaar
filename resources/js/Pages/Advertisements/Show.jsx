@@ -216,14 +216,7 @@ export default function AdvertisementShow({
                                 <p className="whitespace-pre-line text-gray-700">
                                     {advertisement.description}
                                 </p>
-
                                 <p className="text-black-500 mt-3 text-sm">
-                                    Listed on{' '}
-                                    {new Date(
-                                        advertisement.start_date,
-                                    ).toLocaleDateString()}
-                                </p>
-                                <p className="text-black-500 text-sm">
                                     Expires on{' '}
                                     {new Date(
                                         advertisement.end_date,

@@ -47,13 +47,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </NavLink>
 
                                 <NavLink
-                                    href={route('users.index')}
-                                    active={route().current('users.index')}
-                                >
-                                    Users
-                                </NavLink>
-
-                                <NavLink
                                     href={route('advertisements.index')}
                                     active={route().current(
                                         'advertisements.index',
@@ -74,6 +67,22 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current('rentals.index')}
                                 >
                                     Rentals
+                                </NavLink>
+
+                                {user.is_admin ? (
+                                    <NavLink
+                                        href={route('users.index')}
+                                        active={route().current('users.index')}
+                                    >
+                                        Users
+                                    </NavLink>
+                                ) : null}
+
+                                <NavLink
+                                    href={route('contracts.index')}
+                                    active={route().current('contracts.index')}
+                                >
+                                    Contracts
                                 </NavLink>
                             </div>
                         </div>

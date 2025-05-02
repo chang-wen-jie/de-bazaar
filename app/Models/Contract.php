@@ -9,8 +9,9 @@ class Contract extends Model
 {
     protected $fillable = [
         'user_id',
+        'title',
         'file_path',
-        'status'
+        'description',
     ];
 
     public function user(): BelongsTo
