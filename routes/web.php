@@ -4,6 +4,7 @@ use App\Http\Controllers\AdvertisementController;
 use App\Http\Controllers\AdvertisementPurchaseController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\ReviewController;
@@ -22,11 +23,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
+    Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
+
     Route::middleware([AdminMiddleware::class])->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
         Route::get('/users/{user}/contract', [UserController::class, 'downloadContract'])->name('users.contract');
     });
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
 
     Route::get('/advertisements', [AdvertisementController::class, 'index'])->name('advertisements.index');
     Route::get('/advertisements/{advertisement}', [AdvertisementController::class, 'show'])->name('advertisements.show');

@@ -6,14 +6,14 @@ export default function AdvertisementsIndex({
     advertisements,
     filters,
     userCanCreate,
+    translations,
 }) {
     const { auth } = usePage().props;
-
-    // State for filters
     const [type, setType] = useState(filters.type || '');
     const [sortBy, setSortBy] = useState(filters.sortBy || '');
     const [previousSortBy, setPreviousSortBy] = useState(filters.sortBy || '');
     const [sortOrder] = useState(filters.sortOrder || 'asc');
+    const trans = (key) => translations[key] || key;
 
     const applyFilters = () => {
         let query = new URLSearchParams();
@@ -40,7 +40,7 @@ export default function AdvertisementsIndex({
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Advertisements
+                    {trans('advertisements')}
                 </h2>
             }
         >
@@ -56,10 +56,18 @@ export default function AdvertisementsIndex({
                                     onChange={(e) => setType(e.target.value)}
                                     className="min-w-[150px] rounded border px-3 py-2"
                                 >
-                                    <option value="">All Types</option>
-                                    <option value="Sale">Sale</option>
-                                    <option value="Auction">Auction</option>
-                                    <option value="Rental">Rental</option>
+                                    <option value="">
+                                        {trans('all_types')}
+                                    </option>
+                                    <option value="Sale">
+                                        {trans('sale')}
+                                    </option>
+                                    <option value="Auction">
+                                        {trans('auction')}
+                                    </option>
+                                    <option value="Rental">
+                                        {trans('rental')}
+                                    </option>
                                 </select>
 
                                 <select
@@ -67,16 +75,20 @@ export default function AdvertisementsIndex({
                                     onChange={(e) => setSortBy(e.target.value)}
                                     className="min-w-[150px] rounded border px-3 py-2"
                                 >
-                                    <option value="">Sort By</option>
-                                    <option value="title">Title</option>
-                                    <option value="price">Price</option>
+                                    <option value="">{trans('sort_by')}</option>
+                                    <option value="title">
+                                        {trans('title')}
+                                    </option>
+                                    <option value="price">
+                                        {trans('price')}
+                                    </option>
                                 </select>
 
                                 <button
                                     onClick={applyFilters}
                                     className="rounded bg-blue-500 px-4 py-2 text-white"
                                 >
-                                    Apply
+                                    {trans('apply')}
                                 </button>
                             </div>
 
@@ -89,13 +101,12 @@ export default function AdvertisementsIndex({
                                             )}
                                             className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
                                         >
-                                            Create New Advertisement
+                                            {trans('create_advertisement')}
                                         </Link>
                                     ) : (
                                         <div className="flex items-center">
                                             <span className="mr-2 text-sm text-gray-600">
-                                                You've reached your limit for
-                                                active advertisements
+                                                {trans('limit_reached')}
                                             </span>
                                         </div>
                                     )}
@@ -115,7 +126,8 @@ export default function AdvertisementsIndex({
                                     </h3>
                                     <p>{advertisement.description}</p>
                                     <p className="mt-2 font-bold text-blue-600">
-                                        € {advertisement.price}
+                                        {trans('currency_symbol')}{' '}
+                                        {advertisement.price}
                                     </p>
                                     <div className="mt-4">
                                         <span className="bg-gray-200 px-3 py-1 text-xs">

@@ -6,7 +6,8 @@ import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
+    const { auth, locale, translations } = usePage().props;
+    const user = auth.user;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -26,6 +27,9 @@ export default function AuthenticatedLayout({ header, children }) {
     const roleName = roleLabels[user.role_id];
     const roleStyle = roleColors[user.role_id];
 
+    // Translation helper function
+    const trans = (key) => translations?.[key] || key;
+
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="border-b border-gray-100 bg-white">
@@ -43,7 +47,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                 >
-                                    Dashboard
+                                    {trans('dashboard')}
                                 </NavLink>
 
                                 <NavLink
@@ -52,21 +56,21 @@ export default function AuthenticatedLayout({ header, children }) {
                                         'advertisements.index',
                                     )}
                                 >
-                                    Advertisements
+                                    {trans('advertisements')}
                                 </NavLink>
 
                                 <NavLink
                                     href={route('favorites.index')}
                                     active={route().current('favorites.index')}
                                 >
-                                    Favorites
+                                    {trans('favorites')}
                                 </NavLink>
 
                                 <NavLink
                                     href={route('rentals.index')}
                                     active={route().current('rentals.index')}
                                 >
-                                    Rentals
+                                    {trans('rentals')}
                                 </NavLink>
 
                                 {user.is_admin ? (
@@ -74,7 +78,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                         href={route('users.index')}
                                         active={route().current('users.index')}
                                     >
-                                        Users
+                                        {trans('users')}
                                     </NavLink>
                                 ) : null}
 
@@ -82,12 +86,29 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route('contracts.index')}
                                     active={route().current('contracts.index')}
                                 >
-                                    Contracts
+                                    {trans('contracts')}
                                 </NavLink>
                             </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
+                            {/* Language Switcher */}
+                            <div className="mr-4 flex items-center">
+                                <Link
+                                    href={route(
+                                        'language.switch',
+                                        locale === 'en' ? 'nl' : 'en'
+                                    )}
+                                    className="flex items-center space-x-1 rounded-md bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                                    data={{ preserveScroll: false, preserveState: false, only: [] }}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                                    </svg>
+                                    <span>{locale === 'en' ? trans('switch_to_dutch') : trans('switch_to_english')}</span>
+                                </Link>
+                            </div>
+
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -100,7 +121,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                                 <span
                                                     className={`ml-2 rounded-full px-2 py-0.5 text-xs font-semibold ${roleStyle}`}
                                                 >
-                                                    {roleName}
+                                                    {trans(roleName?.toLowerCase())}
                                                 </span>
 
                                                 <svg
@@ -123,14 +144,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                         <Dropdown.Link
                                             href={route('users.show', user.id)}
                                         >
-                                            Profile
+                                            {trans('profile')}
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route('logout')}
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
+                                            {trans('log_out')}
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -138,6 +159,20 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="-me-2 flex items-center sm:hidden">
+                            {/* Mobile Language Switcher */}
+                            <Link
+                                href={route(
+                                    'language.switch',
+                                    locale === 'en' ? 'nl' : 'en'
+                                )}
+                                className="mr-2 rounded-md bg-gray-100 p-2 text-gray-700"
+                                data={{ preserveScroll: false, preserveState: false, only: [] }}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                                </svg>
+                            </Link>
+
                             <button
                                 onClick={() =>
                                     setShowingNavigationDropdown(
@@ -191,7 +226,44 @@ export default function AuthenticatedLayout({ header, children }) {
                             href={route('dashboard')}
                             active={route().current('dashboard')}
                         >
-                            Dashboard
+                            {trans('dashboard')}
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink
+                            href={route('advertisements.index')}
+                            active={route().current('advertisements.index')}
+                        >
+                            {trans('advertisements')}
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink
+                            href={route('favorites.index')}
+                            active={route().current('favorites.index')}
+                        >
+                            {trans('favorites')}
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink
+                            href={route('rentals.index')}
+                            active={route().current('rentals.index')}
+                        >
+                            {trans('rentals')}
+                        </ResponsiveNavLink>
+
+                        {user.is_admin && (
+                            <ResponsiveNavLink
+                                href={route('users.index')}
+                                active={route().current('users.index')}
+                            >
+                                {trans('users')}
+                            </ResponsiveNavLink>
+                        )}
+
+                        <ResponsiveNavLink
+                            href={route('contracts.index')}
+                            active={route().current('contracts.index')}
+                        >
+                            {trans('contracts')}
                         </ResponsiveNavLink>
                     </div>
 
@@ -209,14 +281,14 @@ export default function AuthenticatedLayout({ header, children }) {
                             <ResponsiveNavLink
                                 href={route('users.show', user.id)}
                             >
-                                Profile
+                                {trans('profile')}
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
                                 href={route('logout')}
                                 as="button"
                             >
-                                Log Out
+                                {trans('log_out')}
                             </ResponsiveNavLink>
                         </div>
                     </div>

@@ -1,12 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.jsx';
 import { Head, Link } from '@inertiajs/react';
 
-export default function UsersIndex({ users }) {
+export default function UsersIndex({ users, translations }) {
+    const trans = (key) => translations[key] || key;
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Users
+                    {trans('users_header')}
                 </h2>
             }
         >
@@ -20,16 +21,16 @@ export default function UsersIndex({ users }) {
                                 <thead>
                                     <tr className="bg-gray-100">
                                         <th className="border border-gray-300 px-4 py-2 text-left">
-                                            Name
+                                            {trans('name')}
                                         </th>
                                         <th className="border border-gray-300 px-4 py-2 text-left">
-                                            Email
+                                            {trans('email')}
                                         </th>
                                         <th className="border border-gray-300 px-4 py-2 text-left">
-                                            Role
+                                            {trans('role')}
                                         </th>
                                         <th className="border border-gray-300 px-4 py-2 text-left">
-                                            Actions
+                                            {trans('actions')}
                                         </th>
                                     </tr>
                                 </thead>
@@ -56,7 +57,9 @@ export default function UsersIndex({ users }) {
                                                         target="_blank"
                                                         rel="noreferrer"
                                                     >
-                                                        Download Contract
+                                                        {trans(
+                                                            'download_contract',
+                                                        )}
                                                     </a>
                                                 </div>
                                             </td>

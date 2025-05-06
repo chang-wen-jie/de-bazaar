@@ -2,12 +2,14 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 
-export default function ContractsShow({ contract }) {
+export default function ContractsShow({ contract, translations }) {
+    const trans = (key) => translations[key] || key;
+
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Contract Details
+                    {trans('contract_details')}
                 </h2>
             }
         >
@@ -20,14 +22,14 @@ export default function ContractsShow({ contract }) {
                             href={route('contracts.index')}
                             className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
                         >
-                            Back to Contracts
+                            {trans('back_to_contracts')}
                         </Link>
                         <div className="flex space-x-2">
                             <Link
                                 href={route('contracts.download', contract.id)}
                                 className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
                             >
-                                Download
+                                {trans('download')}
                             </Link>
                             <Link
                                 href={route('contracts.destroy', contract.id)}
@@ -44,7 +46,7 @@ export default function ContractsShow({ contract }) {
                                     }
                                 }}
                             >
-                                Delete
+                                {trans('delete')}
                             </Link>
                         </div>
                     </div>
@@ -58,12 +60,12 @@ export default function ContractsShow({ contract }) {
                             <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div>
                                     <h3 className="mb-2 text-lg font-semibold">
-                                        Contract Details
+                                        {trans('contract_details_label')}
                                     </h3>
                                     <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-4">
                                         <p>
                                             <span className="font-medium">
-                                                Uploaded on:
+                                                {trans('uploaded_on')}
                                             </span>{' '}
                                             {format(
                                                 new Date(contract.created_at),
@@ -75,12 +77,12 @@ export default function ContractsShow({ contract }) {
 
                                 <div>
                                     <h3 className="mb-2 text-lg font-semibold">
-                                        User Information
+                                        {trans('user_information')}
                                     </h3>
                                     <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-4">
                                         <p>
                                             <span className="font-medium">
-                                                Name:
+                                                {trans('user_name')}
                                             </span>{' '}
                                             {contract.user.first_name}{' '}
                                             {contract.user.infix}{' '}
@@ -88,7 +90,7 @@ export default function ContractsShow({ contract }) {
                                         </p>
                                         <p>
                                             <span className="font-medium">
-                                                Email:
+                                                {trans('user_email')}
                                             </span>{' '}
                                             {contract.user.email}
                                         </p>
@@ -99,7 +101,7 @@ export default function ContractsShow({ contract }) {
                             {contract.description && (
                                 <div className="mt-6">
                                     <h3 className="mb-2 text-lg font-semibold">
-                                        Description
+                                        {trans('description_heading')}
                                     </h3>
                                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
                                         <p className="whitespace-pre-line">

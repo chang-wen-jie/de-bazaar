@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 
-export default function Create({ types, errors: pageErrors }) {
+export default function Create({ types, errors: pageErrors, translations }) {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         description: '',
@@ -10,6 +10,7 @@ export default function Create({ types, errors: pageErrors }) {
         start_date: '',
         end_date: '',
     });
+    const trans = (key) => translations[key] || key;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -20,7 +21,7 @@ export default function Create({ types, errors: pageErrors }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Create Advertisement
+                    {trans('create_advertisement_header')}
                 </h2>
             }
         >
@@ -29,7 +30,6 @@ export default function Create({ types, errors: pageErrors }) {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg">
-                        {/* Add display for the limit error */}
                         {pageErrors?.limit && (
                             <div className="mb-4 rounded-md bg-red-50 p-4">
                                 <div className="flex">
@@ -48,7 +48,7 @@ export default function Create({ types, errors: pageErrors }) {
                                     </div>
                                     <div className="ml-3">
                                         <h3 className="text-sm font-medium text-red-800">
-                                            Limit Reached
+                                            {trans('limit_reached_title')}
                                         </h3>
                                         <div className="mt-2 text-sm text-red-700">
                                             {pageErrors.limit}
@@ -64,7 +64,7 @@ export default function Create({ types, errors: pageErrors }) {
                                     htmlFor="title"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    Title*
+                                    {trans('title_label')}*
                                 </label>
                                 <input
                                     type="text"
@@ -88,7 +88,7 @@ export default function Create({ types, errors: pageErrors }) {
                                     htmlFor="description"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    Description*
+                                    {trans('description_label')}
                                 </label>
                                 <textarea
                                     id="description"
@@ -112,7 +112,7 @@ export default function Create({ types, errors: pageErrors }) {
                                     htmlFor="price"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    Price*
+                                    {trans('price_label')}
                                 </label>
                                 <input
                                     type="number"
@@ -139,7 +139,7 @@ export default function Create({ types, errors: pageErrors }) {
                                     htmlFor="type_id"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    Advertisement Type*
+                                    {trans('advertisement_type')}
                                 </label>
                                 <select
                                     id="type_id"
@@ -150,7 +150,9 @@ export default function Create({ types, errors: pageErrors }) {
                                     className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                                     required
                                 >
-                                    <option value="">Select Type</option>
+                                    <option value="">
+                                        {trans('select_type')}
+                                    </option>
                                     {types.map((type) => (
                                         <option key={type.id} value={type.id}>
                                             {type.name.charAt(0).toUpperCase() +
@@ -170,7 +172,7 @@ export default function Create({ types, errors: pageErrors }) {
                                     htmlFor="start_date"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    Start Date*
+                                    {trans('start_date')}
                                 </label>
                                 <input
                                     type="date"
@@ -194,7 +196,7 @@ export default function Create({ types, errors: pageErrors }) {
                                     htmlFor="end_date"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    End Date*
+                                    {trans('end_date')}
                                 </label>
                                 <input
                                     type="date"
@@ -220,8 +222,8 @@ export default function Create({ types, errors: pageErrors }) {
                                     className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                 >
                                     {processing
-                                        ? 'Creating...'
-                                        : 'Create Advertisement'}
+                                        ? trans('creating')
+                                        : trans('create_advertisement_button')}
                                 </button>
                             </div>
                         </form>

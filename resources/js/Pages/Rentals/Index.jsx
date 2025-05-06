@@ -3,9 +3,10 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { useState } from 'react';
 
-export default function Index({ rentals, isGuest, flash }) {
+export default function Index({ rentals, isGuest, flash, translations }) {
     const [returnModalOpen, setReturnModalOpen] = useState(false);
     const [selectedRental, setSelectedRental] = useState(null);
+    const trans = (key) => translations[key] || key;
 
     const { data, setData, post, progress, processing, errors, reset } =
         useForm({
@@ -40,11 +41,19 @@ export default function Index({ rentals, isGuest, flash }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    {isGuest ? 'My Rented Items' : 'My Rental Listings'}
+                    {isGuest
+                        ? trans('my_rented_items')
+                        : trans('my_rental_listings')}
                 </h2>
             }
         >
-            <Head title={isGuest ? 'My Rented Items' : 'My Rental Listings'} />
+            <Head
+                title={
+                    isGuest
+                        ? trans('my_rented_items')
+                        : trans('my_rental_listings')
+                }
+            />
 
             {/* Success message */}
             {flash && flash.success && (
@@ -65,11 +74,12 @@ export default function Index({ rentals, isGuest, flash }) {
                                             className="flex flex-col gap-4 rounded-lg border p-4 md:flex-row"
                                         >
                                             <div className="w-full flex-shrink-0 md:w-1/4">
-                                                {/* Show return photo if it exists, otherwise show advertisement photo */}
                                                 {rental.return_photo ? (
                                                     <div>
                                                         <p className="mb-1 text-sm font-medium text-gray-600">
-                                                            Return Photo:
+                                                            {trans(
+                                                                'return_photo',
+                                                            )}
                                                         </p>
                                                         <img
                                                             src={`/storage/${rental.return_photo}`}
@@ -122,7 +132,9 @@ export default function Index({ rentals, isGuest, flash }) {
                                                     <div className="flex flex-wrap gap-x-8 gap-y-2">
                                                         <div>
                                                             <span className="font-medium">
-                                                                Rental Period:
+                                                                {trans(
+                                                                    'rental_period',
+                                                                )}
                                                             </span>{' '}
                                                             {format(
                                                                 new Date(
@@ -143,8 +155,9 @@ export default function Index({ rentals, isGuest, flash }) {
                                                             rental.user && (
                                                                 <div>
                                                                     <span className="font-medium">
-                                                                        Rented
-                                                                        by:
+                                                                        {trans(
+                                                                            'rented_by',
+                                                                        )}
                                                                     </span>{' '}
                                                                     {
                                                                         rental
@@ -157,7 +170,9 @@ export default function Index({ rentals, isGuest, flash }) {
                                                         {rental.wear_and_tear && (
                                                             <div>
                                                                 <span className="font-medium">
-                                                                    Condition:
+                                                                    {trans(
+                                                                        'condition',
+                                                                    )}
                                                                 </span>{' '}
                                                                 {
                                                                     rental.wear_and_tear
@@ -178,14 +193,16 @@ export default function Index({ rentals, isGuest, flash }) {
                                                             }
                                                             className="mt-4 inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
                                                         >
-                                                            Return Item
+                                                            {trans(
+                                                                'return_item',
+                                                            )}
                                                         </button>
                                                     )}
 
                                                 {/* Status for returned items */}
                                                 {rental.return_photo && (
                                                     <div className="mt-4 inline-block rounded-md bg-green-100 px-4 py-2 text-sm font-medium text-green-800">
-                                                        Item Returned
+                                                        {trans('item_returned')}
                                                     </div>
                                                 )}
                                             </div>
@@ -196,15 +213,15 @@ export default function Index({ rentals, isGuest, flash }) {
                                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
                                     <p className="text-gray-500">
                                         {isGuest
-                                            ? "You don't have any active rentals."
-                                            : 'None of your rental listings are currently rented out.'}
+                                            ? trans('no_active_rentals')
+                                            : trans('no_rental_listings')}
                                     </p>
                                     {isGuest && (
                                         <Link
                                             href={route('advertisements.index')}
                                             className="mt-4 inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
                                         >
-                                            Browse Advertisements
+                                            {trans('browse_advertisements')}
                                         </Link>
                                     )}
                                 </div>
@@ -214,7 +231,6 @@ export default function Index({ rentals, isGuest, flash }) {
                 </div>
             </div>
 
-            {/* Return Modal */}
             {returnModalOpen && selectedRental && (
                 <div className="fixed inset-0 z-10 overflow-y-auto">
                     <div className="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
@@ -235,15 +251,14 @@ export default function Index({ rentals, isGuest, flash }) {
                                 <div className="sm:flex sm:items-start">
                                     <div className="mt-3 w-full text-center sm:ml-4 sm:mt-0 sm:text-left">
                                         <h3 className="text-lg font-medium leading-6 text-gray-900">
-                                            Return{' '}
+                                            {trans('return_item_modal_title')}{' '}
                                             {selectedRental.advertisement.title}
                                         </h3>
                                         <div className="mt-2">
                                             <p className="text-sm text-gray-500">
-                                                Please upload a photo of the
-                                                item to return it. After
-                                                submission, we'll assess the
-                                                wear and tear automatically.
+                                                {trans(
+                                                    'return_item_instructions',
+                                                )}
                                             </p>
                                             <form
                                                 onSubmit={handleSubmit}
@@ -251,7 +266,7 @@ export default function Index({ rentals, isGuest, flash }) {
                                             >
                                                 <div className="mb-4">
                                                     <label className="mb-2 block text-sm font-bold text-gray-700">
-                                                        Return Photo
+                                                        {trans('return_photo')}
                                                     </label>
                                                     <input
                                                         type="file"
@@ -293,8 +308,10 @@ export default function Index({ rentals, isGuest, flash }) {
                                                         className="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 sm:ml-3 sm:w-auto sm:text-sm"
                                                     >
                                                         {processing
-                                                            ? 'Uploading...'
-                                                            : 'Submit Return'}
+                                                            ? trans('uploading')
+                                                            : trans(
+                                                                  'submit_return',
+                                                              )}
                                                     </button>
                                                     <button
                                                         type="button"
@@ -303,7 +320,7 @@ export default function Index({ rentals, isGuest, flash }) {
                                                         }
                                                         className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
                                                     >
-                                                        Cancel
+                                                        {trans('cancel')}
                                                     </button>
                                                 </div>
                                             </form>

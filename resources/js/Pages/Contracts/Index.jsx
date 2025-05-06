@@ -2,12 +2,14 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 
-export default function ContractsIndex({ contracts }) {
+export default function ContractsIndex({ contracts, translations }) {
+    const trans = (key) => translations[key] || key;
+
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Contracts
+                    {trans('contracts_header')}
                 </h2>
             }
         >
@@ -20,7 +22,7 @@ export default function ContractsIndex({ contracts }) {
                             href={route('contracts.create')}
                             className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                         >
-                            Upload New Contract
+                            {trans('upload_new_contract')}
                         </Link>
                     </div>
 
@@ -31,16 +33,16 @@ export default function ContractsIndex({ contracts }) {
                                     <thead>
                                         <tr className="bg-gray-100">
                                             <th className="border border-gray-300 px-4 py-2 text-left">
-                                                Title
+                                                {trans('contract_title')}
                                             </th>
                                             <th className="border border-gray-300 px-4 py-2 text-left">
-                                                User
+                                                {trans('contract_user')}
                                             </th>
                                             <th className="border border-gray-300 px-4 py-2 text-left">
-                                                Upload Date
+                                                {trans('upload_date')}
                                             </th>
                                             <th className="border border-gray-300 px-4 py-2 text-left">
-                                                Actions
+                                                {trans('actions')}
                                             </th>
                                         </tr>
                                     </thead>
@@ -83,7 +85,7 @@ export default function ContractsIndex({ contracts }) {
                                                             )}
                                                             className="rounded bg-green-500 px-2 py-1 text-xs text-white hover:bg-green-600"
                                                         >
-                                                            Download
+                                                            {trans('download')}
                                                         </Link>
                                                         <Link
                                                             href={route(
@@ -96,14 +98,16 @@ export default function ContractsIndex({ contracts }) {
                                                             onClick={(e) => {
                                                                 if (
                                                                     !confirm(
-                                                                        'Are you sure you want to delete this contract?',
+                                                                        trans(
+                                                                            'delete_confirmation',
+                                                                        ),
                                                                     )
                                                                 ) {
                                                                     e.preventDefault();
                                                                 }
                                                             }}
                                                         >
-                                                            Delete
+                                                            {trans('delete')}
                                                         </Link>
                                                     </div>
                                                 </td>
@@ -114,7 +118,7 @@ export default function ContractsIndex({ contracts }) {
                             ) : (
                                 <div className="py-4 text-center">
                                     <p className="text-gray-500">
-                                        No contracts found.
+                                        {trans('no_contracts')}
                                     </p>
                                 </div>
                             )}

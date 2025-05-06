@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function ContractsCreate({ users }) {
+export default function ContractsCreate({ users, translations }) {
     const { data, setData, post, processing, errors, reset, progress } =
         useForm({
             user_id: '',
@@ -12,6 +12,7 @@ export default function ContractsCreate({ users }) {
         });
 
     const [fileName, setFileName] = useState('');
+    const trans = (key) => translations[key] || key;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -31,7 +32,7 @@ export default function ContractsCreate({ users }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Upload New Contract
+                    {trans('upload_contract_header')}
                 </h2>
             }
         >
@@ -57,7 +58,9 @@ export default function ContractsCreate({ users }) {
                                         }
                                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     >
-                                        <option value="">Select a user</option>
+                                        <option value="">
+                                            {trans('select_user')}
+                                        </option>
                                         {users.map((user) => (
                                             <option
                                                 key={user.id}
@@ -79,7 +82,7 @@ export default function ContractsCreate({ users }) {
                                         htmlFor="title"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Contract Title
+                                        {trans('contract_title_label')}
                                     </label>
                                     <input
                                         type="text"
@@ -102,7 +105,7 @@ export default function ContractsCreate({ users }) {
                                         htmlFor="description"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Description (Optional)
+                                        {trans('description_optional')}
                                     </label>
                                     <textarea
                                         id="description"
@@ -128,11 +131,11 @@ export default function ContractsCreate({ users }) {
                                         htmlFor="contract_file"
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Contract File (PDF, DOC, DOCX)
+                                        {trans('contract_file_label')}
                                     </label>
                                     <div className="mt-1 flex items-center">
                                         <label className="cursor-pointer rounded-md bg-blue-50 px-4 py-2 text-blue-700 hover:bg-blue-100">
-                                            Select File
+                                            {trans('select_file')}
                                             <input
                                                 type="file"
                                                 id="contract_file"
@@ -142,7 +145,8 @@ export default function ContractsCreate({ users }) {
                                             />
                                         </label>
                                         <span className="ml-3 text-sm text-gray-500">
-                                            {fileName || 'No file selected'}
+                                            {fileName ||
+                                                trans('no_file_selected')}
                                         </span>
                                     </div>
                                     {errors.contract_file && (
@@ -168,7 +172,7 @@ export default function ContractsCreate({ users }) {
                                         onClick={() => window.history.back()}
                                         className="mr-4 rounded border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {trans('cancel')}
                                     </button>
                                     <button
                                         type="submit"
@@ -176,8 +180,8 @@ export default function ContractsCreate({ users }) {
                                         className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:opacity-50"
                                     >
                                         {processing
-                                            ? 'Uploading...'
-                                            : 'Upload Contract'}
+                                            ? trans('uploading')
+                                            : trans('upload_contract_button')}
                                     </button>
                                 </div>
                             </form>

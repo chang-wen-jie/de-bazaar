@@ -9,9 +9,11 @@ export default function UserShow({
     hasReviewed,
     currentUserId,
     allListings,
+    translations,
 }) {
     const isGuest = user.role?.name === 'guest';
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const trans = (key) => translations[key] || key;
 
     const { data, setData, post, processing, errors, reset } = useForm({
         rating: 5,
@@ -96,7 +98,7 @@ export default function UserShow({
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    User Profile
+                    {trans('user_profile')}
                 </h2>
             }
         >
@@ -124,7 +126,7 @@ export default function UserShow({
                                         d="M10 19l-7-7m0 0l7-7m-7 7h18"
                                     />
                                 </svg>
-                                Back to Advertisements
+                                {trans('back_to_advertisements')}
                             </Link>
                         </div>
 
@@ -139,7 +141,7 @@ export default function UserShow({
                                         {user.full_name}
                                     </h1>
                                     <p className="mt-1 text-sm text-gray-500">
-                                        Member since{' '}
+                                        {trans('member_since')}{' '}
                                         {new Date(
                                             user.created_at,
                                         ).toLocaleDateString()}
@@ -151,8 +153,8 @@ export default function UserShow({
                                         <span className="ml-2 text-sm text-gray-500">
                                             ({reviewCount}{' '}
                                             {reviewCount === 1
-                                                ? 'review'
-                                                : 'reviews'}
+                                                ? trans('review')
+                                                : trans('reviews')}
                                             )
                                         </span>
                                     </div>
@@ -160,17 +162,17 @@ export default function UserShow({
                                         <span
                                             className={`rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800`}
                                         >
-                                            {user.role?.name}
+                                            {trans(user.role?.name)}
                                         </span>
                                         {!isGuest ? (
                                             <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
                                                 {user.advertisements_count || 0}{' '}
-                                                listings
+                                                {trans('listings')}
                                             </span>
                                         ) : (
                                             <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
                                                 {allListings?.length || 0}{' '}
-                                                transactions
+                                                {trans('transactions_count')}
                                             </span>
                                         )}
                                     </div>
@@ -180,7 +182,7 @@ export default function UserShow({
                             {isGuest ? (
                                 <div className="mt-8">
                                     <h2 className="mb-4 text-xl font-semibold text-gray-800">
-                                        Transactions
+                                        {trans('transactions')}
                                     </h2>
 
                                     {allListings && allListings.length > 0 ? (
@@ -204,7 +206,9 @@ export default function UserShow({
                                                                 }
                                                             </p>
                                                             <p className="mt-2 font-bold text-blue-600">
-                                                                €{' '}
+                                                                {trans(
+                                                                    'currency_symbol',
+                                                                )}{' '}
                                                                 {
                                                                     advertisement.price
                                                                 }
@@ -245,8 +249,7 @@ export default function UserShow({
                                     ) : (
                                         <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
                                             <p className="text-gray-500">
-                                                This user hasn't made any
-                                                transactions yet.
+                                                {trans('no_transactions')}
                                             </p>
                                         </div>
                                     )}
@@ -254,7 +257,7 @@ export default function UserShow({
                             ) : (
                                 <div className="mt-8">
                                     <h2 className="mb-4 text-xl font-semibold text-gray-800">
-                                        Active Listings
+                                        {trans('active_listings')}
                                     </h2>
 
                                     {user.advertisements &&
@@ -279,7 +282,9 @@ export default function UserShow({
                                                                 }
                                                             </p>
                                                             <p className="mt-2 font-bold text-blue-600">
-                                                                €{' '}
+                                                                {trans(
+                                                                    'currency_symbol',
+                                                                )}{' '}
                                                                 {
                                                                     advertisement.price
                                                                 }
@@ -294,7 +299,9 @@ export default function UserShow({
                                                                     }
                                                                 </span>
                                                                 <span className="bg-gray-100 px-2 py-1 text-xs text-gray-600">
-                                                                    Ends{' '}
+                                                                    {trans(
+                                                                        'ends',
+                                                                    )}{' '}
                                                                     {new Date(
                                                                         advertisement.end_date,
                                                                     ).toLocaleDateString()}
@@ -308,8 +315,7 @@ export default function UserShow({
                                     ) : (
                                         <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
                                             <p className="text-gray-500">
-                                                This user has no active listings
-                                                at the moment.
+                                                {trans('no_active_listings')}
                                             </p>
                                         </div>
                                     )}
@@ -317,7 +323,7 @@ export default function UserShow({
                                     <div className="mt-8">
                                         <div className="flex items-center justify-between">
                                             <h2 className="text-xl font-semibold text-gray-800">
-                                                Reviews
+                                                {trans('reviews_heading')}
                                             </h2>
 
                                             {!hasReviewed &&
@@ -328,7 +334,7 @@ export default function UserShow({
                                                         }
                                                         className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
                                                     >
-                                                        Write a Review
+                                                        {trans('write_review')}
                                                     </button>
                                                 )}
                                         </div>
@@ -336,12 +342,12 @@ export default function UserShow({
                                         {isFormOpen && (
                                             <div className="mt-4 rounded-lg border bg-gray-50 p-4">
                                                 <h3 className="mb-2 font-medium">
-                                                    Write a Review
+                                                    {trans('write_review')}
                                                 </h3>
                                                 <form onSubmit={handleSubmit}>
                                                     <div className="mb-3">
                                                         <label className="mb-1 block text-sm text-gray-700">
-                                                            Rating
+                                                            {trans('rating')}
                                                         </label>
                                                         <div className="flex">
                                                             {[
@@ -377,7 +383,9 @@ export default function UserShow({
 
                                                     <div className="mb-3">
                                                         <label className="mb-1 block text-sm text-gray-700">
-                                                            Review
+                                                            {trans(
+                                                                'review_text',
+                                                            )}
                                                         </label>
                                                         <textarea
                                                             value={data.comment}
@@ -390,7 +398,9 @@ export default function UserShow({
                                                             }
                                                             className="w-full rounded-md border border-gray-300 px-3 py-2"
                                                             rows={4}
-                                                            placeholder="Write your review here..."
+                                                            placeholder={trans(
+                                                                'review_placeholder',
+                                                            )}
                                                         ></textarea>
                                                         {errors.comment && (
                                                             <div className="mt-1 text-sm text-red-500">
@@ -409,7 +419,7 @@ export default function UserShow({
                                                             }
                                                             className="rounded-md border px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                                                         >
-                                                            Cancel
+                                                            {trans('cancel')}
                                                         </button>
                                                         <button
                                                             type="submit"
@@ -418,7 +428,9 @@ export default function UserShow({
                                                             }
                                                             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
                                                         >
-                                                            Submit Review
+                                                            {trans(
+                                                                'submit_review',
+                                                            )}
                                                         </button>
                                                     </div>
                                                 </form>
@@ -483,8 +495,7 @@ export default function UserShow({
                                             ) : (
                                                 <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
                                                     <p className="text-gray-500">
-                                                        This user has no reviews
-                                                        yet.
+                                                        {trans('no_reviews')}
                                                     </p>
                                                 </div>
                                             )}

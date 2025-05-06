@@ -10,12 +10,14 @@ export default function AdvertisementShow({
     hasReviewed,
     averageRating,
     reviewCount,
+    translations,
 }) {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [favorited, setFavorited] = useState(isFavorited);
     const isRental = advertisement.type.name === 'rental';
     const [isProcessing, setIsProcessing] = useState(false);
     const [purchaseMessage, setPurchaseMessage] = useState(null);
+    const trans = (key) => translations[key] || key;
 
     const { data, setData, post, processing, errors, reset } = useForm({
         rating: 5,
@@ -143,7 +145,7 @@ export default function AdvertisementShow({
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Advertisement Details
+                    {trans('advertisement_details')}
                 </h2>
             }
         >
@@ -171,7 +173,7 @@ export default function AdvertisementShow({
                                         d="M10 19l-7-7m0 0l7-7m-7 7h18"
                                     />
                                 </svg>
-                                Back to Advertisements
+                                {trans('back_to_advertisements')}
                             </Link>
                         </div>
 
@@ -211,13 +213,13 @@ export default function AdvertisementShow({
 
                             <div className="mb-8">
                                 <h2 className="mb-4 text-xl font-semibold text-gray-800">
-                                    Description
+                                    {trans('description')}
                                 </h2>
                                 <p className="whitespace-pre-line text-gray-700">
                                     {advertisement.description}
                                 </p>
                                 <p className="text-black-500 mt-3 text-sm">
-                                    Expires on{' '}
+                                    {trans('expires_on')}{' '}
                                     {new Date(
                                         advertisement.end_date,
                                     ).toLocaleDateString()}
@@ -231,7 +233,7 @@ export default function AdvertisementShow({
 
                             <div className="mb-8">
                                 <h2 className="mb-4 text-xl font-semibold text-gray-800">
-                                    About the Seller
+                                    {trans('about_seller')}
                                 </h2>
                                 <Link
                                     href={`/users/${advertisement.user.id}`}
@@ -420,8 +422,7 @@ export default function AdvertisementShow({
                                         ) : (
                                             <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
                                                 <p className="text-gray-500">
-                                                    This rental has no reviews
-                                                    yet.
+                                                    {trans('no_reviews_yet')}
                                                 </p>
                                             </div>
                                         )}
@@ -450,12 +451,12 @@ export default function AdvertisementShow({
                                         className="w-full rounded-md bg-blue-600 py-3 text-center font-medium text-white hover:bg-blue-700 disabled:bg-blue-300"
                                     >
                                         {isProcessing ? (
-                                            <span>Processing...</span>
+                                            <span>{trans('processing')}</span>
                                         ) : (
                                             <span>
                                                 {isRental
-                                                    ? 'Rent Now'
-                                                    : 'Buy Now'}
+                                                    ? trans('rent_now')
+                                                    : trans('buy_now')}
                                             </span>
                                         )}
                                     </button>
@@ -472,14 +473,14 @@ export default function AdvertisementShow({
                                         }`}
                                     >
                                         {favorited
-                                            ? 'Remove from Favorites'
-                                            : 'Add to Favorites'}
+                                            ? trans('remove_from_favorites')
+                                            : trans('add_to_favorites')}
                                     </button>
                                 )}
 
                                 {currentUserId === advertisement.user.id && (
                                     <div className="rounded-md bg-gray-100 p-4 text-center text-gray-700">
-                                        You own this advertisement
+                                        {trans('you_own_this')}
                                     </div>
                                 )}
                             </div>
