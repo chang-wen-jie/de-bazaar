@@ -7,6 +7,7 @@ use App\Models\AdvertisementStatus;
 use App\Models\AdvertisementType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -58,6 +59,10 @@ class AdvertisementController extends Controller
             'advertisements' => $advertisements,
             'filters' => $request->only(['type', 'sortBy', 'sortOrder']),
             'userCanCreate' => $userCanCreate,
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error')
+            ],
         ]);
     }
 
@@ -87,6 +92,11 @@ class AdvertisementController extends Controller
             'isFavorited' => $isFavorited,
             'hasReviewed' => $hasReviewed,
             'currentUserId' => Auth::id(),
+            'translations' => trans('messages'), // Add translations to match the Create component
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error')
+            ],
         ]);
     }
 
@@ -100,47 +110,61 @@ class AdvertisementController extends Controller
         return Inertia::render('Advertisements/Create', [
             'types' => $types,
             'userCounts' => $userAdCounts,
+            'translations' => trans('messages'),
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error')
+            ],
+            'errors' => session('errors') ? session('errors')->getBag('default')->getMessages() : (object) [],
         ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'type_id' => 'required|exists:advertisement_types,id',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-        ]);
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'price' => 'required|numeric|min:0',
+                'type_id' => 'required|exists:advertisement_types,id',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+            ]);
 
-        $userId = Auth::id();
-        $typeId = $request->type_id;
+            $userId = Auth::id();
+            $typeId = $request->type_id;
 
-        $adType = AdvertisementType::find($typeId);
+            $activeStatus = AdvertisementStatus::where('name', 'active')->first();
 
-        $maxAllowed = 4;
+            if (!$activeStatus) {
+                throw new \Exception("Status 'active' not found in the database.");
+            }
 
-        if (Advertisement::hasReachedTypeLimit($userId, $typeId, $maxAllowed)) {
-            return back()
-                ->withErrors(['limit' => "You can only have {$maxAllowed} active advertisements of type '{$adType->name->value}'"])
-                ->withInput();
+            $maxAllowed = 4;
+            if (Advertisement::hasReachedTypeLimit($userId, $typeId, $maxAllowed)) {
+                return redirect()->back()->withErrors([
+                    'limit_reached_title' => "You can only have {$maxAllowed} active advertisements"
+                ]);
+            }
+
+            $advertisement = Advertisement::create([
+                'user_id' => $userId,
+                'status_id' => $activeStatus->id,
+                ...$validated,
+            ]);
+
+            return redirect()->route('advertisements.show', $advertisement->id)
+                ->with('success', 'Advertisement created successfully!');
+
+        } catch (\Exception $e) {
+            Log::error('Advertisement creation failed', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id(),
+                'input' => $request->all()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Er is een fout opgetreden bij het aanmaken van de advertentie. Probeer het later opnieuw.');
         }
-
-        $activeStatus = AdvertisementStatus::where('name', 'active')->first();
-
-        $advertisement = Advertisement::create([
-            'user_id' => $userId,
-            'title' => $request->title,
-            'description' => $request->description,
-            'price' => $request->price,
-            'type_id' => $typeId,
-            'status_id' => $activeStatus->id,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
-
-        return redirect()->route('advertisements.show', $advertisement->id)
-            ->with('success', 'Advertisement created successfully!');
     }
 }

@@ -18,9 +18,14 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next)
     {
-        $locale = session('locale', config('app.locale', 'en'));
+        $locale = session()->has('locale') ? session('locale') : config('app.locale');
 
-        App::setLocale($locale);
+        try {
+            App::setLocale($locale);
+        } catch (\Exception $e) {
+            \Log::error("Failed to set locale: " . $e->getMessage());
+            App::setLocale(config('app.locale'));
+        }
 
         $response = $next($request);
 

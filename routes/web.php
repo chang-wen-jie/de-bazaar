@@ -12,17 +12,12 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
-    return redirect()->route(Auth::check() ? 'dashboard' : 'login');
+    return redirect()->route(Auth::check() ? 'advertisements.index' : 'login');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
-
     Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 
     Route::middleware([AdminMiddleware::class])->group(function () {

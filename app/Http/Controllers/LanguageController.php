@@ -20,11 +20,8 @@ class LanguageController extends Controller
             $locale = config('app.locale');
         }
 
-        $oldLocale = session('locale');
         session(['locale' => $locale]);
         App::setLocale($locale);
-
-        session()->flash('locale_switched', "Language switched from {$oldLocale} to {$locale}");
 
         return redirect()->back()->with([
             'x-inertia-request' => true,

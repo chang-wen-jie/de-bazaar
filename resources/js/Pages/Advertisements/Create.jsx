@@ -1,7 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
 
-export default function Create({ types, errors: pageErrors, translations }) {
+export default function Create({
+    types,
+    errors: pageErrors,
+    translations,
+    flash,
+}) {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         description: '',
@@ -10,12 +16,26 @@ export default function Create({ types, errors: pageErrors, translations }) {
         start_date: '',
         end_date: '',
     });
+
     const trans = (key) => translations[key] || key;
+
+    useEffect(() => {}, [flash]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('advertisements.store'));
     };
+
+    const allErrors = { ...errors };
+    if (pageErrors && typeof pageErrors === 'object') {
+        Object.keys(pageErrors).forEach((key) => {
+            if (typeof pageErrors[key] === 'string') {
+                allErrors[key] = pageErrors[key];
+            } else if (Array.isArray(pageErrors[key])) {
+                allErrors[key] = pageErrors[key][0];
+            }
+        });
+    }
 
     return (
         <AuthenticatedLayout
@@ -30,7 +50,32 @@ export default function Create({ types, errors: pageErrors, translations }) {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg">
-                        {pageErrors?.limit && (
+                        {flash && flash.success && (
+                            <div className="mb-4 rounded-md bg-green-50 p-4">
+                                <div className="flex">
+                                    <div className="flex-shrink-0">
+                                        <svg
+                                            className="h-5 w-5 text-green-400"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <div className="ml-3">
+                                        <p className="text-sm font-medium text-green-800">
+                                            {flash.success}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {pageErrors?.limit_reached_title && (
                             <div className="mb-4 rounded-md bg-red-50 p-4">
                                 <div className="flex">
                                     <div className="flex-shrink-0">
@@ -51,20 +96,56 @@ export default function Create({ types, errors: pageErrors, translations }) {
                                             {trans('limit_reached_title')}
                                         </h3>
                                         <div className="mt-2 text-sm text-red-700">
-                                            {pageErrors.limit}
+                                            {pageErrors.limit_reached_title}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        <form onSubmit={handleSubmit}>
+                        {Object.keys(allErrors).length > 0 && (
+                            <div className="mb-4 rounded-md bg-red-50 p-4">
+                                <div className="flex">
+                                    <div className="flex-shrink-0">
+                                        <svg
+                                            className="h-5 w-5 text-red-400"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <div className="ml-3">
+                                        <h3 className="text-sm font-medium text-red-800">
+                                            Please fix the following errors:
+                                        </h3>
+                                        <div className="mt-2 text-sm text-red-700">
+                                            <ul className="list-disc space-y-1 pl-5">
+                                                {Object.keys(allErrors).map(
+                                                    (field) => (
+                                                        <li key={field}>
+                                                            {allErrors[field]}
+                                                        </li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSubmit} noValidate>
                             <div className="mb-4">
                                 <label
                                     htmlFor="title"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    {trans('title_label')}*
+                                    {trans('title_label')}
                                 </label>
                                 <input
                                     type="text"
@@ -74,7 +155,6 @@ export default function Create({ types, errors: pageErrors, translations }) {
                                         setData('title', e.target.value)
                                     }
                                     className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                                    required
                                 />
                                 {errors.title && (
                                     <div className="mt-1 text-sm text-red-600">
@@ -98,7 +178,6 @@ export default function Create({ types, errors: pageErrors, translations }) {
                                     }
                                     rows="4"
                                     className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                                    required
                                 ></textarea>
                                 {errors.description && (
                                     <div className="mt-1 text-sm text-red-600">
@@ -125,7 +204,6 @@ export default function Create({ types, errors: pageErrors, translations }) {
                                     min="0"
                                     max="1000000"
                                     className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                                    required
                                 />
                                 {errors.price && (
                                     <div className="mt-1 text-sm text-red-600">
@@ -148,15 +226,18 @@ export default function Create({ types, errors: pageErrors, translations }) {
                                         setData('type_id', e.target.value)
                                     }
                                     className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                                    required
                                 >
                                     <option value="">
                                         {trans('select_type')}
                                     </option>
                                     {types.map((type) => (
                                         <option key={type.id} value={type.id}>
-                                            {type.name.charAt(0).toUpperCase() +
-                                                type.name.slice(1)}
+                                            {type.name
+                                                ? type.name
+                                                      .charAt(0)
+                                                      .toUpperCase() +
+                                                  type.name.slice(1)
+                                                : ''}
                                         </option>
                                     ))}
                                 </select>
@@ -182,7 +263,6 @@ export default function Create({ types, errors: pageErrors, translations }) {
                                         setData('start_date', e.target.value)
                                     }
                                     className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                                    required
                                 />
                                 {errors.start_date && (
                                     <div className="mt-1 text-sm text-red-600">
@@ -206,7 +286,6 @@ export default function Create({ types, errors: pageErrors, translations }) {
                                         setData('end_date', e.target.value)
                                     }
                                     className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                                    required
                                 />
                                 {errors.end_date && (
                                     <div className="mt-1 text-sm text-red-600">
